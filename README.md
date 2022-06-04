@@ -4,6 +4,7 @@
 - staticwebapp.bicep - template to create an empty static web app on the free tier.
 - storage.bicep - template to create a LRS hot tier storage account.
 - vnet.bicep - template to create a virtual network with subnet.
+- resourcegroup.bicep - template to create a resource group for a subscription
 
 ## To use templates
 `az deployment group create --resource-group {resource group } --template-file { template.bicep } --parameters { parameters.json }`
