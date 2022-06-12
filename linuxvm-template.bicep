@@ -1,14 +1,20 @@
 // Global parameters
-// Is this a new or an existing Virtual Network and Subnet
-// The default is 'new' for a new deployment, otherwise 'existing' should be
-// passed otherwise the deployment will fail if the Virtual Network
-// and the Subnet have already been defined with the same Suffix
+// Uses the resource group's location to set the location for all resources
+param Location string = resourceGroup().location
+
+// VM Details
+// VM Sizes.  
+// A warning is given for Standard_B1ls as it is not listed in the current version of the helper
 @allowed([
-  'new'
-  'existing'
+  'Standard_B1ls'
+  'Standard_B1s'
+  'Standard_B1ms'
+  'Standard_B2s'
 ])
-@description('New or existing Virtual Network and Subnet')
-param New_Or_Existing_VNet string
+param VMSize string = 'Standard_B1ls'
+
+// OsDisk configured for local redundant storage
+var osDiskType = 'Standard_LRS'
 
 // Name of VM
 param VMName string = 'LinuxVM'
@@ -29,8 +35,18 @@ param authenticationType string = 'sshPublicKey'
 @secure()
 param adminPasswordOrKey string
 
-// Uses the resource group's location to set the location for all resources
-param Location string = resourceGroup().location
+// Configuation set to use PublicKey
+var linuxConfiguration = {
+  disablePasswordAuthentication: true
+  ssh: {
+    publicKeys: [
+      {
+        path: '/home/${adminUsername}/.ssh/authorized_keys'
+        keyData: adminPasswordOrKey
+      }
+    ]
+  }
+}
 
 // Suffix for resources
 param Suffix string = 'HomeLab'
@@ -51,6 +67,17 @@ var ResourceTags =  {
 }
 
 // Virtual Network
+// Is this a new or an existing Virtual Network and Subnet
+// The default is 'new' for a new deployment, otherwise 'existing' should be
+// passed otherwise the deployment will fail if the Virtual Network
+// and the Subnet have already been defined with the same Suffix
+@allowed([
+  'new'
+  'existing'
+])
+@description('New or existing Virtual Network and Subnet')
+param New_Or_Existing_VNet string
+
 // Virtual network name
 param vNetNameBase string = 'vNet01'
 var vNetName = toLower('${vNetNameBase}-${Suffix}')
@@ -98,26 +125,7 @@ param PublicIPDHCP string = 'Dynamic'
 ])
 param PrivateIPDHCP string = 'Dynamic'
 
-//  VM Details
-// VM Sizes.  
-// A warning is given for Standard_B1ls as it is not listed in the current version of the helper
-@allowed([
-  'Standard_B1ls'
-  'Standard_B1s'
-  'Standard_B1ms'
-  'Standard_B2s'
-])
-param VMSize string = 'Standard_B1ls'
-
 // Which release of Ubuntu
-//@allowed([
-//  '12.04.5-LTS'
-//  '14.04.5-LTS'
-//  '16.04.0-LTS'
-//  '18.04-LTS'
-//  '20_04-lts-gen2'
-//])
-
 @allowed([
   '0001-com-ubuntu-server-jammy'
   '0001-com-ubuntu-server-focal'
@@ -131,25 +139,6 @@ param skuOffer string = '0001-com-ubuntu-server-jammy'
 param ubuntuOSVersion string = '22_04-lts-gen2'
 
 param ubuntuReleaseVersion string = 'latest'
-//
-//  Suffixes, prefixes, and other descriptive variables
-//
-
-// OsDisk configured for local redundant storage
-var osDiskType = 'Standard_LRS'
-
-// Configuation set to use PublicKey
-var linuxConfiguration = {
-  disablePasswordAuthentication: true
-  ssh: {
-    publicKeys: [
-      {
-        path: '/home/${adminUsername}/.ssh/authorized_keys'
-        keyData: adminPasswordOrKey
-      }
-    ]
-  }
-}
 
 var imageReference = {
   publisher: 'canonical'
