@@ -10,6 +10,13 @@
 @description('New or existing Virtual Network and Subnet')
 param New_Or_Existing_VNet string
 
+@allowed([
+  'new'
+  'existing'
+])
+@description('New or existing Virtual Network and Subnet')
+param New_Or_Existing_Subnet string
+
 // Uses the resource group's location to set the location for all resources
 param Location string = resourceGroup().location
 
@@ -63,7 +70,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = if (toLower(New_O
   }
   
   // Subnet will be associated with the resource group
-  resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = if (toLower(New_Or_Existing_VNet) == 'new') {
+  resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = if (toLower(New_Or_Existing_Subnet) == 'new') {
   //resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = {
     name: SubnetName
     parent: vnet
