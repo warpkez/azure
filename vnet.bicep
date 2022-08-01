@@ -14,7 +14,8 @@ param New_Or_Existing_VNet string
 param Location string = resourceGroup().location
 
 // Suffix for resources
-param Suffix string = 'HomeLab'
+param Suffix string = resourceGroup().name
+// 'HomeLab'
 
 // Tags for resources
 // Get the current datetime 
