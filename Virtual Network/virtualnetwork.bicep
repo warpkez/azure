@@ -7,22 +7,21 @@
   'new'
   'existing'
 ])
-@description('New or existing Virtual Network and Subnet')
-param New_Or_Existing_VNet string
+@description('New Virtual Network?')
+param New_VNet string
 
 @allowed([
   'new'
   'existing'
 ])
-@description('New or existing Virtual Network and Subnet')
-param New_Or_Existing_Subnet string
+@description('New Subnet?')
+param New_Subnet string
 
 // Uses the resource group's location to set the location for all resources
 param Location string = resourceGroup().location
 
 // Suffix for resources
 param Suffix string = resourceGroup().name
-// 'HomeLab'
 
 // Tags for resources
 // Get the current datetime 
@@ -31,11 +30,16 @@ param BaseDate string = utcNow('u')
 // Sets the time for UTC +10
 var DateCreated = dateTimeAdd(BaseDate, 'PT10H')
 
+// Descriptive name
+param Description string
+
 // Resource tags
 // Add any and all resource tags here
 var ResourceTags =  {
   DateCreated: DateCreated
   ResourceFunction: Suffix
+  Description: Description
+  ResourceLocation: Location
 }
 
 // Virtual Network
@@ -55,26 +59,26 @@ var SubnetName = toLower('${SubnetNameBase}-${Suffix}')
 param SubnetAddressSpace string = '10.0.0.0/24'
 
 // Virtual network will be associated with the resource group
-resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = if (toLower(New_Or_Existing_VNet) == 'new') {
-  //resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-    name: vNetName
-    location: Location
-    tags: ResourceTags
-    properties: {
-      addressSpace: {
-        addressPrefixes: [
-         NetworkAddressSpace 
-        ]
-      }
+resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = if (toLower(New_VNet) == 'new') {
+//resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+  name: vNetName
+  location: Location
+  tags: ResourceTags
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+       NetworkAddressSpace 
+      ]
     }
   }
+}
   
-  // Subnet will be associated with the resource group
-  resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = if (toLower(New_Or_Existing_Subnet) == 'new') {
-  //resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = {
-    name: SubnetName
-    parent: vnet
-    properties: {
-      addressPrefix: SubnetAddressSpace
-    } 
-  }
+// Subnet will be associated with the resource group
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = if (toLower(New_Subnet) == 'new') {
+//resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = {
+  name: SubnetName
+  parent: vnet
+  properties: {
+    addressPrefix: SubnetAddressSpace
+  } 
+}
