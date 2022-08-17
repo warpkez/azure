@@ -3,16 +3,16 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "VMName" :{
-            "value": "{ Name of the VM }"
+            "value": "Name of the VM"
         },
         "adminPasswordOrKey" :{
-            "value": "{ You public key }"
+            "value": "You ssh public key eg ssh-rsa A1B2C3D4E5FGHI......"
         },
         "AllowedSourceIP" :{
-            "value": "{ Your ISP assign IP address }"
+            "value": "Your ISP assign IP address"
         },
         "New_Or_Existing_VNet" :{
-            "value": "{ new | existing }"
+            "value": "new | existing"
         }        
     }
 }
