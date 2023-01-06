@@ -35,7 +35,7 @@ param Description string
 
 // Resource tags
 // Add any and all resource tags here
-var ResourceTags =  {
+var ResourceTags = {
   DateCreated: DateCreated
   ResourceFunction: Suffix
   Description: Description
@@ -81,4 +81,4 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' = if (toL
   properties: {
     addressPrefix: SubnetAddressSpace
   } 
-}
+} 
